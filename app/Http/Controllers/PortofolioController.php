@@ -80,4 +80,16 @@ class PortofolioController extends Controller
         });
         return response()->json(['status' => 'success']);
     }
+
+    public function downloadCV($path)
+    {
+        // dd($path);  
+        $path = storage_path('app/public/' . $path);
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        $filename = "CV Muhammad Fadli Kurniawan.pdf";
+
+        return response()->download($path, $filename);
+    }
 }

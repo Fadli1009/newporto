@@ -18,6 +18,7 @@ Route::get('/sertifikat', [PortofolioController::class, 'sertifikat']);
 Route::get('/project/{slug}', [PortofolioController::class, 'projectShow'])->name('show.project');
 Route::get('/certificate/{slug}', [PortofolioController::class, 'certificateShow'])->name('show.certificate');
 Route::get('/personalskils', [PortofolioController::class, 'personalSkils']);
+Route::get('downloadcv/{path}', [PortofolioController::class, 'downloadCV']) ->where('path', '.*')->name('download.cv');
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginAction'])->name('loginAction');

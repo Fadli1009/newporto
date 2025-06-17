@@ -4,6 +4,22 @@
     <style>
         .modal-overlay {
             backdrop-filter: blur(4px);
+
+        }
+
+        #modalContent {
+            overflow: auto;
+            /* atau scroll, tergantung kebutuhan */
+            -ms-overflow-style: none;
+            /* Internet Explorer 10+ */
+            /* scrollbar-width: thin; */
+            /* Firefox */
+        }
+
+        #modalContent::-webkit-scrollbar {
+            /* display: none; */
+            width: 10px;
+            /* Chrome, Safari, Opera */
         }
 
         .modal-enter {
@@ -58,18 +74,26 @@
                             <i class="ri-add-line text-xs"></i>
                             <h1 class="text-sm">Hire Me</h1>
                         </button>
-
-                        <a href="storage/{{ $profile->cv }}" target="_blank"
+                        
+                        <a href="{{ route('download.cv', $profile->cv) }}"
                             class="flex text-white items-center border-2 border-gray-600 px-2 py-1 rounded space-x-1 hover:bg-[#555c68] transition-all cursor-pointer">
-                            <i class="ri-download-2-line text-xs"></i>
-                            <h1 class="text-sm">Download CV</h1>
+                            Download CV
                         </a>
+
                     </div>
                 </div>
                 <div class="flex justify-center order-1 lg:order-2 lg:justify-end mb-5 lg:mb-0">
-                    <img src="{{ asset('storage/' . $profile->photo_home) }}"
-                        class='text-right w-56 h-56 rounded-full border-2 border-gray-400 p-4' alt="">
+                    <div class="relative w-56 h-56 aspect-square">
+                        <img src="{{ asset('storage/' . $profile->photo_home) }}"
+                            class="w-full h-full rounded-full border-2 border-gray-400 p-4 " alt="">
+
+                        <button id="confenti"
+                            class="absolute bottom-4 cursor-pointer left-4 w-10 h-10 rounded-full shadow bg-red-500 shadow-xl/70 transition-all flex justify-center items-center hover:bg-red-600">
+                            <i class="ri-heart-fill text-white animate-ping"></i>
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </div>
         <div class="mt-20 bg-[#424750] py-4 px-6 rounded-xl group">
@@ -93,7 +117,7 @@
                                         class="rounded h-15 w-15 lg:w-20 lg:h-20" alt="">
                                     <div>
                                         <h3 class="font-bold text-white lg:text-xl">{{ $item->judul }}</h3>
-                                        <p class="text-gray-300">{{ $item->judul }}</p>
+                                        <p class="text-gray-300">{{ $item->sub_judul }}</p>
                                     </div>
                                 </div>
                                 <i class="ri-arrow-right-wide-line text-sm lg:text-2xl text-gray-700"></i>
@@ -107,7 +131,7 @@
 
     </div>
     <div id="modalOverlay"
-        class="fixed inset-0 bg-black bg-opacity-50 modal-overlay hidden z-50 flex items-center justify-center p-4">
+        class="fixed inset-0 bg-[#393E46]/50 backdrop-blur-xl bg-opacity-50 modal-overlay hidden z-50 flex items-center justify-center p-4 scrollbar-none">
         <!-- Modal Content -->
         <div id="modalContent" class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <!-- Modal Header -->
@@ -168,7 +192,7 @@
                             Pesan <span class="text-red-500">*</span>
                         </label>
                         <div class="relative">
-                            <textarea id="body" name="pesan" required rows="6"
+                            <textarea id="bodys" name="pesan" required rows="6"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
                                 placeholder="Bisakah Anda menghadiri undangan interview dari perusahaan ..."></textarea>
                         </div>
@@ -238,8 +262,9 @@
         const submitButton = document.getElementById('submitButton');
         const successToast = document.getElementById('successToast');
         const errorToast = document.getElementById('errorToast');
-        const bodyTextarea = document.getElementById('body');
+        const bodyTextarea = document.getElementById('bodys');
         const charCount = document.getElementById('charCount');
+        const buttonConfenti = document.getElementById('confenti');
 
         // Character counter
         bodyTextarea.addEventListener('input', function() {
@@ -300,7 +325,7 @@
 
             const subject = document.getElementById('subject').value.trim();
             const email = document.getElementById('email').value.trim();
-            const body = document.getElementById('body').value.trim();
+            const body = document.getElementById('bodys').value.trim();
 
             // Subject validation
             if (!subject) {
@@ -393,7 +418,7 @@
 
                 if (response.ok) {
                     showToast(successToast);
-                    closeModalFunction();                    
+                    closeModalFunction();
 
                 } else {
                     throw new Error('Failed to send message');
@@ -424,5 +449,21 @@
             this.style.height = 'auto';
             this.style.height = this.scrollHeight + 'px';
         });
+        buttonConfenti.addEventListener('click', function() {
+            const rect = buttonConfenti.getBoundingClientRect()
+            const x = (rect.left + rect.width / 2) / window.innerWidth
+            const y = (rect.top + rect.height / 2) / window.innerHeight
+            confetti({
+                particleCount: 100,
+                spread: 80,
+                origin: {
+                    x,
+                    y
+                },
+                shapes: ["heart"],
+                scalar: 3,
+                colors: ['FF2929']
+            });
+        })
     </script>
 @endsection
